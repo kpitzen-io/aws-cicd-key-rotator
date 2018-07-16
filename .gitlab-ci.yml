@@ -1,0 +1,23 @@
+stages:
+  -test
+  - build
+  - deploy
+
+test:
+  stage: test
+  script:
+    - "apk update"
+    - "apk add zip"
+    - "yarn"
+    - "yarn test"
+
+deploy:
+  image: hashicorp/terraform:light
+  stage: deploy
+  script:
+    - "export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID"
+    - "export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_KEY"
+    - "export AWS_DEFAULT_REGION=us-east-1"
+    - "zip -r key_rotator.zip zip/*"
+    - "terraform validate -var gitlab_group_id=$GROUP_ID -var api_key=$API_KEY"
+    - "terraform apply -var gitlab_group_id=$GROUP_ID -var api_key=$API_KEY"

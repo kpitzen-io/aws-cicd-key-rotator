@@ -1,4 +1,4 @@
-import rotateKeys from 'src/key-rotator';
+import rotateKeys from 'key-rotator';
 
 const apiKey = process.env["API_KEY"]
 const groupId = process.env["GROUP_ID"]
