@@ -8,7 +8,7 @@ test:
   stage: test
   script:
     - "apk update"
-    - "apk add zip"
+    - "apk add yarn"
     - "yarn"
     - "yarn test"
 
