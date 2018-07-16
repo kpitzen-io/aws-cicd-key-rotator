@@ -1,0 +1,29 @@
+{
+  "name": "key-rotator",
+  "version": "1.0.0",
+  "description": "Key rotation manager for AWS and Gitlab",
+  "main": "index.js",
+  "author": "Kyle Pitzen",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.275.1"
+  },
+  "scripts": {
+    "test": "ava",
+    "lint": "eslint . --fix"
+  },
+  "devDependencies": {
+    "ava": "^0.25.0",
+    "eslint": "^5.1.0",
+    "husky": "^0.14.3"
+  },
+  "ava": {
+    "files": [
+      "tests/*.spec.js"
+    ],
+    "sources": [
+      "src/*.js",
+      "index.js"
+    ]
+  }
+}
