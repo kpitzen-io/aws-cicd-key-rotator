@@ -8,9 +8,20 @@ test:
   stage: test
   script:
     - "apk update"
-    - "apk add yarn"
+    - "apk add yarn zip"
     - "yarn"
     - "yarn test"
+
+build:
+  image: alpine:latest
+  stage: test
+  script:
+    - "apk update"
+    - "apk add zip"
+    - "zip -r build/key_rotator.zip src/*"
+  artifacts:
+    paths:
+      - build
 
 deploy:
   image: hashicorp/terraform:light
@@ -19,6 +30,5 @@ deploy:
     - "export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID"
     - "export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_KEY"
     - "export AWS_DEFAULT_REGION=us-east-1"
-    - "zip -r key_rotator.zip zip/*"
     - "terraform validate -var gitlab_group_id=$GROUP_ID -var api_key=$API_KEY"
     - "terraform apply -var gitlab_group_id=$GROUP_ID -var api_key=$API_KEY"
