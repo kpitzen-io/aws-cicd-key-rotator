@@ -4,6 +4,7 @@ stages:
   - deploy
 
 test:
+  image: alpine:latest
   stage: test
   script:
     - "apk update"
