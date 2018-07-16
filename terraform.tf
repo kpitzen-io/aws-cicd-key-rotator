@@ -16,8 +16,6 @@ terraform {
   }
 }
 
-resource "aws_iam_role" "role" {}
-
 resource "aws_iam_role" "iam_for_lambda" {
   name = "kpitzenLambdaInvocation"
 
