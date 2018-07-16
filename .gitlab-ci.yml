@@ -18,10 +18,10 @@ build:
   script:
     - "apk update"
     - "apk add zip"
-    - "zip -r build/key_rotator.zip src/*"
+    - "zip -r key_rotator.zip src/*"
   artifacts:
     paths:
-      - build
+      - key_rotator.zip
 
 deploy:
   image: hashicorp/terraform:light
