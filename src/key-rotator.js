@@ -7,8 +7,6 @@ async function rotateKeys(groupId, apiKey) {
     const accessKey = newAwsKeys.AccessKeyId;
     const secretKey = newAwsKeys.SecretAccessKey;
 
-    console.log(accessKey, secretKey);
-
     const accessKeyRotate = await asyncSetNewGroupKey(
         groupId,
         'AWS_ACCESS_KEY_ID',
@@ -42,6 +40,7 @@ const asyncGetNewKeys = () => new Promise((resolve, reject) => {
 });
 
 const asyncSetNewGroupKey = (groupId, keyName, keyValue, apiKey) => {
+    console.log(groupId, keyName, keyValue, apiKey);
     const getGroupVariableUrl = `https://gitlab.com/api/v4/groups/${groupId}/variables/${keyName}`;
 
     const createGroupVariableUrl = `https://gitlab.com/api/v4/groups/${groupId}/variables`;
