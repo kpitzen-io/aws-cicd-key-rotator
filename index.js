@@ -1,4 +1,4 @@
-const keyRotator = require('key-rotator');
+const keyRotator = require('src/key-rotator');
 
 const apiKey = process.env["API_KEY"]
 const groupId = process.env["GROUP_ID"]

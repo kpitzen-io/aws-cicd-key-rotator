@@ -2,7 +2,7 @@
   "name": "key-rotator",
   "version": "1.0.0",
   "description": "Key rotation manager for AWS and Gitlab",
-  "main": "src/index.js",
+  "main": "index.js",
   "author": "Kyle Pitzen",
   "license": "MIT",
   "dependencies": {
