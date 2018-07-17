@@ -65,15 +65,15 @@ const asyncSetNewGroupKey = (groupId, keyName, keyValue, apiKey) => {
     return new Promise((resolve, reject) => {
         fetch(getGroupVariableUrl).then(response => {
             fetch(updateGroupVariableUrl, updateGroupVariablePayload).then(response => {
-                console.log(response);
+                console.log('update fires', response.text());
                 resolve(response);
             }).catch(error => {
                 reject(error);
             });
         }).catch(error => {
             fetch(createGroupVariableUrl, createGroupVariablePayload).then(response => {
-                console.log(response);
-                resolve(response);
+                console.log('create fires', response.text());
+                resolve(response.text());
             }).catch(error => {
                 reject(error);
             });
