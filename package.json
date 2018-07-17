@@ -26,5 +26,10 @@
       "src/*.js",
       "index.js"
     ]
+  },
+  "husky": {
+    "hooks": {
+      "precommit": "eslint . --fix"
+    }
   }
 }
