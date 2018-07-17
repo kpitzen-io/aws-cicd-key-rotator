@@ -87,7 +87,7 @@ resource "aws_iam_role" "cloudwatch_role" {
     {
       "Action": "sts:AssumeRole",
       "Principal": {
-        "Service": "cloudwatch.amazonaws.com"
+        "Service": "events.amazonaws.com"
       },
       "Effect": "Allow",
       "Sid": ""
