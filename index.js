@@ -1,10 +1,13 @@
-import rotateKeys from 'src/key-rotator';
+const keyRotator = require('src/key-rotator');
 
-const apiKey = process.env["API_KEY"]
-const groupId = process.env["GROUP_ID"]
+const apiKey = process.env['API_KEY'];
+const groupId = process.env['GROUP_ID'];
+const awsUser = process.env['AWS_USER'];
 
-export default handler = (event, context) => {
-    return new Promise((resolve, reject) => {
-        return rotateKeys(groupId, apiKey)
-    });
+const handler = () => {
+    return keyRotator.rotateKeys(groupId, apiKey, awsUser);
+};
+
+module.exports = {
+    handler
 };
