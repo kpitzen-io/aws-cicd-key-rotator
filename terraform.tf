@@ -64,7 +64,7 @@ resource "aws_iam_role_policy" "policy" {
       "Action": [
         "iam:CreateAccessKey",
         "iam:DeleteAccessKey",
-        "iam:ListAccessKey"
+        "iam:ListAccessKeys"
       ],
       "Effect": "Allow",
       "Resource": "*"
