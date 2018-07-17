@@ -23,16 +23,16 @@ async function rotateKeys(groupId, apiKey) {
         apiKey
     );
     return {
-        "accessKey": accessKeyRotate,
-        "secretKey": secretKeyRotate
-    }
+        'accessKey': accessKeyRotate,
+        'secretKey': secretKeyRotate
+    };
 }
 
 const asyncGetNewKeys = () => new Promise((resolve, reject) => {
     const iam = new AWS.IAM({region: 'us-east-1'});
     const gitlabUserParams = {
-        UserName: "GitLabServiceUser"
-    }
+        UserName: 'GitLabServiceUser'
+    };
     const newAccessKey = iam.createAccessKey(gitlabUserParams, (error, data) => {
         if (error) {
             reject(error);
@@ -42,18 +42,18 @@ const asyncGetNewKeys = () => new Promise((resolve, reject) => {
 });
 
 const asyncSetNewGroupKey = (groupId, keyName, keyValue, apiKey) => {
-    const getGroupVariableUrl = `https://gitlab.com/api/v4/groups/${groupId}/variables/${keyName}`
+    const getGroupVariableUrl = `https://gitlab.com/api/v4/groups/${groupId}/variables/${keyName}`;
 
-    const createGroupVariableUrl = `https://gitlab.com/api/v4/groups/${groupId}/variables`
+    const createGroupVariableUrl = `https://gitlab.com/api/v4/groups/${groupId}/variables`;
     const createGroupVariablePayload = {
-        method: "POST",
+        method: 'POST',
         value: keyValue,
         protected: true
     };
 
-    const updateGroupVariableUrl = `https://gitlab.com/api/v4/groups/${groupId}/variables/${keyName}`
+    const updateGroupVariableUrl = `https://gitlab.com/api/v4/groups/${groupId}/variables/${keyName}`;
     const updateGroupVariablePayload = {
-        method: "PUT",
+        method: 'PUT',
         value: keyValue,
         protected: true
     };
@@ -61,15 +61,15 @@ const asyncSetNewGroupKey = (groupId, keyName, keyValue, apiKey) => {
     return new Promise((resolve, reject) => {
         fetch(getGroupVariableUrl).then(response => {
             fetch(updateGroupVariableUrl, updateGroupVariablePayload).then(response => {
-                resolve(response)
+                resolve(response);
             }).catch(error => {
-                reject(error)
+                reject(error);
             });
         }).catch(error => {
             fetch(createGroupVariableUrl, createGroupVariablePayload).then(response => {
-                resolve(response)
+                resolve(response);
             }).catch(error => {
-                reject(error)
+                reject(error);
             });
         });
     });
@@ -78,15 +78,15 @@ const asyncSetNewGroupKey = (groupId, keyName, keyValue, apiKey) => {
 const asyncListAccessKeys = () => new Promise ((resolve, reject) => {
     const iam = new AWS.IAM({region: 'us-east-1'});
     const gitlabUserParams = {
-        UserName: "GitLabServiceUser"
+        UserName: 'GitLabServiceUser'
     };
 
     iam.listAccessKeys(gitlabUserParams, (err, data) => {
         if (err) {
-            reject(err)
+            reject(err);
         } else {
-            resolve(data.AccessKeyMetadata)
-        };
+            resolve(data.AccessKeyMetadata);
+        }
     });
 });
 
@@ -97,11 +97,11 @@ const asyncDeleteOldKeys = () => new Promise ((resolve, reject) => {
         accessKeys.map(accessKey => {
             const deleteKeyParams = {
                 AccessKeyId: accessKey.AccessKeyId,
-                UserName: "GitLabServiceUser"
+                UserName: 'GitLabServiceUser'
             };
             iam.deleteAccessKey(deleteKeyParams, (err, data) => {
                 if (err) {
-                    reject(err)
+                    reject(err);
                 } else {
                     deletedKeys.push(data);
                 }
@@ -109,7 +109,7 @@ const asyncDeleteOldKeys = () => new Promise ((resolve, reject) => {
             });
         });
     }).catch(error => {
-        reject(error)
+        reject(error);
     });
 
 });
@@ -117,4 +117,4 @@ const asyncDeleteOldKeys = () => new Promise ((resolve, reject) => {
 
 module.exports = {
     rotateKeys
-}
+};

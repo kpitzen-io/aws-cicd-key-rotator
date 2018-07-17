@@ -1,5 +1,5 @@
-import { test } from 'ava';
+const ava = require('ava');
 
-test('sample test should just return true', (t) => {
+ava.test('sample test should just return true', (t) => {
     t.is(true, true);
 });
