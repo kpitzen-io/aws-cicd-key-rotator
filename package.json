@@ -1,5 +1,5 @@
 {
-  "name": "key-rotator",
+  "name": "gitlab-aws-key-rotator",
   "version": "1.0.0",
   "description": "Key rotation manager for AWS and Gitlab",
   "main": "index.js",
