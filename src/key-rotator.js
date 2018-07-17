@@ -7,6 +7,7 @@ async function rotateKeys(groupId, apiKey, awsUser) {
     const accessKey = newAwsKeys.AccessKeyId;
     const secretKey = newAwsKeys.SecretAccessKey;
 
+    console.log('incoming keys', newAwsKeys);
     const accessKeyRotate = await asyncSetNewGroupKey(
         groupId,
         'AWS_ACCESS_KEY_ID',
@@ -40,6 +41,7 @@ const asyncGetNewKeys = (awsUser) => new Promise((resolve, reject) => {
 });
 
 const asyncSetNewGroupKey = (groupId, keyName, keyValue, apiKey) => {
+    console.log('new key setting', groupId, keyName, keyValue, apiKey);
     const getGroupVariableUrl = `https://gitlab.com/api/v4/groups/${groupId}/variables/${keyName}`;
 
     const createGroupVariableUrl = `https://gitlab.com/api/v4/groups/${groupId}/variables`;
@@ -65,18 +67,18 @@ const asyncSetNewGroupKey = (groupId, keyName, keyValue, apiKey) => {
     return new Promise((resolve, reject) => {
         fetch(getGroupVariableUrl).then(response => {
             fetch(updateGroupVariableUrl, updateGroupVariablePayload).then(response => {
-                response.text().then(text => {
-                    console.log('create fires', text);
-                    resolve(text);
+                response.json().then(json => {
+                    console.log('modify fires', json);
+                    resolve(json);
                 })
             }).catch(error => {
                 reject(error);
             });
         }).catch(error => {
             fetch(createGroupVariableUrl, createGroupVariablePayload).then(response => {
-                response.text().then(text => {
-                    console.log('create fires', text);
-                    resolve(text);
+                response.json().then(json => {
+                    console.log('create fires', json);
+                    resolve(json);
                 })
             }).catch(error => {
                 reject(error);
