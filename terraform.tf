@@ -128,5 +128,5 @@ resource "aws_cloudwatch_event_rule" "rule" {
 
 resource "aws_cloudwatch_event_target" "lambda" {
   rule = "${aws_cloudwatch_event_rule.rule.name}"
-  arn  = "arn:aws:lambda:us-east-1:${data.aws_caller_identity.current.account_id}:function:${aws_lambda_function.key_rotator_lambda.name}"
+  arn  = "${aws_lambda_function.key_rotator_lambda.arn}"
 }
