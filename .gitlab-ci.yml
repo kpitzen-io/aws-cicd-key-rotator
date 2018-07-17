@@ -24,7 +24,7 @@ build:
       - key_rotator.zip
 
 
-deploy dev:
+deploy:
   image:
     name: hashicorp/terraform:light
     entrypoint:
@@ -39,24 +39,5 @@ deploy dev:
     - "export AWS_DEFAULT_REGION=us-east-1"
     - "terraform init -reconfigure -input=false"
     - "terraform workspace select dev || terraform workspace new dev"
-    - "terraform validate -input=false -var gitlab_group_id=$GROUP_ID -var api_key=$API_KEY"
-    - "terraform apply -input=false -auto-approve -var gitlab_group_id=$GROUP_ID -var api_key=$API_KEY"
-
-
-deploy prod:
-  image:
-    name: hashicorp/terraform:light
-    entrypoint:
-      - '/usr/bin/env'
-      - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
-  stage: deploy
-  only:
-    - prod
-  script:
-    - "export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID"
-    - "export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_KEY"
-    - "export AWS_DEFAULT_REGION=us-east-1"
-    - "terraform init -reconfigure -input=false"
-    - "terraform workspace select prod || terraform workspace new prod"
     - "terraform validate -input=false -var gitlab_group_id=$GROUP_ID -var api_key=$API_KEY"
     - "terraform apply -input=false -auto-approve -var gitlab_group_id=$GROUP_ID -var api_key=$API_KEY"

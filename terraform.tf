@@ -54,7 +54,7 @@ resource "aws_lambda_function" "key_rotator_lambda" {
 
 resource "aws_iam_role_policy" "policy" {
   name = "keyRotatorPolicy"
-  role = "${aws_iam_role.role}"
+  role = "${aws_iam_role.role.id}"
 
   policy = <<POLICY
 {
