@@ -6,7 +6,8 @@
   "author": "Kyle Pitzen",
   "license": "MIT",
   "dependencies": {
-    "aws-sdk": "^2.275.1"
+    "aws-sdk": "^2.275.1",
+    "fetch": "^1.1.0"
   },
   "scripts": {
     "test": "ava",

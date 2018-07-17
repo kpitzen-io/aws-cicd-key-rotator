@@ -1,11 +1,10 @@
 stages:
-  - test
-  - build
+  - test_build
   - deploy
 
 test:
   image: alpine:latest
-  stage: test
+  stage: test_build
   script:
     - "apk update"
     - "apk add yarn zip"
@@ -14,11 +13,11 @@ test:
 
 build:
   image: alpine:latest
-  stage: build
+  stage: test_build
   script:
     - "apk update"
     - "apk add zip"
-    - "zip -rj key_rotator.zip src/*"
+    - "zip -r key_rotator.zip ./*"
   artifacts:
     paths:
       - key_rotator.zip

@@ -3,8 +3,10 @@ const AWS = require('aws-sdk');
 async function rotateKeys(groupId, apiKey) {
     const deleteAwsKeys = await asyncDeleteOldKeys();
     const newAwsKeys = await asyncGetNewKeys();
-    const accessKey = newAwsKeysAccessKey.AccessKeyId;
-    const secretKey = newAwsKeysAccessKey.SecretAccessKey;
+    const accessKey = newAwsKeys.AccessKeyId;
+    const secretKey = newAwsKeys.SecretAccessKey;
+
+    console.log(accessKey, secretKey);
 
     const accessKeyRotate = await asyncSetNewGroupKey(
         groupId,
@@ -34,9 +36,8 @@ const asyncGetNewKeys = () => new Promise((resolve, reject) => {
         if (error) {
             reject(error);
         }
-        return data;
+        resolve(data);
     });
-    return asyncGetNewKeys;
 });
 
 const asyncSetNewGroupKey = (groupId, keyName, keyValue, apiKey) => {
@@ -83,16 +84,15 @@ const asyncListAccessKeys = () => new Promise ((resolve, reject) => {
         if (err) {
             reject(err)
         } else {
-            resolve(data)
+            resolve(data.AccessKeyMetadata)
         };
     });
 });
 
 const asyncDeleteOldKeys = () => new Promise ((resolve, reject) => {
     const iam = new AWS.IAM({region: 'us-east-1'});
-
+    var deletedKeys = [];
     asyncListAccessKeys().then(accessKeys => {
-        console.log(accessKeys);
         accessKeys.map(accessKey => {
             const deleteKeyParams = {
                 AccessKeyId: accessKey.AccessKeyId,
@@ -102,8 +102,9 @@ const asyncDeleteOldKeys = () => new Promise ((resolve, reject) => {
                 if (err) {
                     reject(err)
                 } else {
-                    resolve(data);
+                    deletedKeys.push(data);
                 }
+                resolve(data);
             });
         });
     }).catch(error => {
