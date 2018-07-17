@@ -3,6 +3,10 @@ stages:
   - validate
   - deploy
 
+cache:
+  paths:
+    - .terraform
+
 test:
   image: alpine:latest
   stage: test_build
