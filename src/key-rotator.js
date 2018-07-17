@@ -11,7 +11,7 @@ async function rotateKeys(groupId, apiKey) {
 
     const accessKeyRotate = await asyncSetNewGroupKey(
         groupId,
-        'AWS_ACCESS_KEY',
+        'AWS_ACCESS_KEY_ID',
         accessKey,
         apiKey
     );
