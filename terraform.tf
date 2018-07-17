@@ -65,7 +65,7 @@ resource "aws_iam_role_policy" "policy" {
         "iam:CreateAccessKey*"
       ],
       "Effect": "Allow",
-      "Resource": "GitLabServiceUser"
+      "Resource": "*"
     }
   ]
 }
