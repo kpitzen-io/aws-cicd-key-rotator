@@ -7,7 +7,6 @@ async function rotateKeys(groupId, apiKey, awsUser) {
     const accessKey = newAwsKeys.AccessKeyId;
     const secretKey = newAwsKeys.SecretAccessKey;
 
-    console.log('incoming keys', newAwsKeys);
     const accessKeyRotate = await asyncSetNewGroupKey(
         groupId,
         'AWS_ACCESS_KEY_ID',
@@ -23,7 +22,9 @@ async function rotateKeys(groupId, apiKey, awsUser) {
     );
     return {
         'accessKey': accessKeyRotate,
-        'secretKey': secretKeyRotate
+        'accessKeySet': accessKeyRotate === accessKey,
+        'secretKey': secretKeyRotate,
+        'secretKeySet': secretKeyRotate === secretKey
     };
 }
 
@@ -41,7 +42,6 @@ const asyncGetNewKeys = (awsUser) => new Promise((resolve, reject) => {
 });
 
 const asyncSetNewGroupKey = (groupId, keyName, keyValue, apiKey) => {
-    console.log('new key setting', groupId, keyName, keyValue, apiKey);
     const getGroupVariableUrl = `https://gitlab.com/api/v4/groups/${groupId}/variables/${keyName}`;
 
     const createGroupVariableUrl = `https://gitlab.com/api/v4/groups/${groupId}/variables`;
@@ -51,10 +51,10 @@ const asyncSetNewGroupKey = (groupId, keyName, keyValue, apiKey) => {
             value: keyValue,
             protected: false,
         }),
-        headers: {
+        headers: JSON.stringify({
             'PRIVATE-TOKEN': apiKey,
             'Content-Type': 'application/json'
-            }
+        })
     };
 
     const updateGroupVariableUrl = `https://gitlab.com/api/v4/groups/${groupId}/variables/${keyName}`;
@@ -64,17 +64,16 @@ const asyncSetNewGroupKey = (groupId, keyName, keyValue, apiKey) => {
             value: keyValue,
             protected: false,
         }),
-        headers: {
+        headers: JSON.stringify({
             'PRIVATE-TOKEN': apiKey,
             'Content-Type': 'application/json'
-            }
+        })
     };
 
     return new Promise((resolve, reject) => {
         fetch(getGroupVariableUrl).then(response => {
             fetch(updateGroupVariableUrl, updateGroupVariablePayload).then(response => {
                 response.json().then(json => {
-                    console.log('modify fires', json);
                     resolve(json);
                 })
             }).catch(error => {
@@ -83,7 +82,6 @@ const asyncSetNewGroupKey = (groupId, keyName, keyValue, apiKey) => {
         }).catch(error => {
             fetch(createGroupVariableUrl, createGroupVariablePayload).then(response => {
                 response.json().then(json => {
-                    console.log('create fires', json);
                     resolve(json);
                 })
             }).catch(error => {
