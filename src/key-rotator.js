@@ -1,21 +1,21 @@
-import * as AWS from 'aws-sdk';
+const AWS = require('aws-sdk');
 
-export default (groupId, apiKey) => {
+const rotateKeys = (groupId, apiKey) => {
 
     keyRotatorPromise = new Promise ((resolve, reject) => {
-        const deleteAwsKeys = await asyncDeleteOldKeys();
-        const newAwsKeys = await asyncGetNewKeys();
+        const deleteAwsKeys = asyncDeleteOldKeys();
+        const newAwsKeys = asyncGetNewKeys();
         const accessKey = newAwsKeysAccessKey.AccessKeyId;
         const secretKey = newAwsKeysAccessKey.SecretAccessKey;
     
-        const accessKeyRotate = await asyncSetNewGroupKey(
+        const accessKeyRotate = asyncSetNewGroupKey(
             groupId,
             'AWS_ACCESS_KEY',
             accessKey,
             apiKey
         );
     
-        const secretKeyRotate = await asyncSetNewGroupKey(
+        const secretKeyRotate = asyncSetNewGroupKey(
             groupId,
             'AWS_SECRET_KEY',
             secretKey,
@@ -35,18 +35,18 @@ export default (groupId, apiKey) => {
 
 const asyncGetNewKeys = () => {
     const keyRotatorPromise = new Promise((resolve, reject) => {
-        const iam = AWS.IAM({region: 'us-east-1'});
+        const iam = new AWS.IAM({region: 'us-east-1'});
         const gitlabUserParams = {
             UserName: "GitLabServiceUser"
         }
-        newAccessKey = await iam.createAccessKey(gitlabUserParams, (error, data) => {
+        const newAccessKey = iam.createAccessKey(gitlabUserParams, (error, data) => {
             if (error) {
                 reject(error);
             }
             return data;
         });
-    return keyRotatorPromise;
     });
+    return keyRotatorPromise;
 };
 
 const asyncSetNewGroupKey = (groupId, keyName, keyValue, apiKey) => {
@@ -83,37 +83,42 @@ const asyncSetNewGroupKey = (groupId, keyName, keyValue, apiKey) => {
     });
 };
 
-const asyncDeleteOldKeys = () => {
-    return new Promise((resolve, reject) => {
-        const iam = new AWS.IAM({region: 'us-east-1'});
-        const gitlabUserParams = {
+const asyncListAccessKeys = () => new Promise ((resolve, reject) => {
+    const gitlabUserParams = {
+        UserName: "GitLabServiceUser"
+    };
+
+    iam.listAccessKeys(gitlabUserParams, (err, data) => {
+        if (err) {
+            reject(err)
+        } else {
+            resolve(data.AccessKeyMetadata)
+        };
+    });
+    return oldAccessKeys;
+});
+
+const asyncDeleteOldKeys = async () => {
+    const iam = new AWS.IAM({region: 'us-east-1'});
+
+    const oldAccessKeys = await asyncListAccessKeys();
+
+    const deleteAccessKeys = oldAccessKeys.map(accessKey => {
+        const deleteKeyParams = {
+            AccessKeyId: accessKey.AccessKeyId,
             UserName: "GitLabServiceUser"
         };
-
-        const oldAccessKeys = await iam.listAccessKeys(gitlabUserParams, (err, data) => {
+        iam.deleteAccessKey(deleteKeyParams, (err, data) => {
             if (err) {
-                reject(err)
+                throw err
             } else {
-                return data.AccessKeyMetadata
-            };
+                return data;
+            }
         });
-
-        const deleteAccessKeys = oldAccessKeys.map(accessKey => {
-            const deleteKeyParams = {
-                AccessKeyId: accessKey.AccessKeyId,
-                UserName: "GitLabServiceUser"
-            };
-            await iam.deleteAccessKey(deleteKeyParams, (err, data) => {
-                if (err) {
-                    reject(err)
-                } else {
-                    resolve(data);
-                }
-            });
-        });
-    }).then(data => {
-        return data
-    }).catch(error => {
-        throw(error)
     });
+}
+
+
+module.exports = {
+    rotateKeys
 }
