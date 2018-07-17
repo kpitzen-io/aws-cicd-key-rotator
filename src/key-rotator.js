@@ -1,9 +1,9 @@
 const AWS = require('aws-sdk');
 const fetch = require('node-fetch');
 
-async function rotateKeys(groupId, apiKey) {
-    const deleteAwsKeys = await asyncDeleteOldKeys();
-    const newAwsKeys = await asyncGetNewKeys();
+async function rotateKeys(groupId, apiKey, awsUser) {
+    const deleteAwsKeys = await asyncDeleteOldKeys(awsUser);
+    const newAwsKeys = await asyncGetNewKeys(awsUser);
     const accessKey = newAwsKeys.AccessKeyId;
     const secretKey = newAwsKeys.SecretAccessKey;
 
@@ -26,22 +26,20 @@ async function rotateKeys(groupId, apiKey) {
     };
 }
 
-const asyncGetNewKeys = () => new Promise((resolve, reject) => {
+const asyncGetNewKeys = (awsUser) => new Promise((resolve, reject) => {
     const iam = new AWS.IAM({region: 'us-east-1'});
     const gitlabUserParams = {
-        UserName: 'GitLabServiceUser'
+        UserName: awsUser
     };
     const newAccessKey = iam.createAccessKey(gitlabUserParams, (error, data) => {
         if (error) {
             reject(error);
         }
-        console.log('newKeys', data);
-        resolve(data);
+        resolve(data.AccessKey);
     });
 });
 
 const asyncSetNewGroupKey = (groupId, keyName, keyValue, apiKey) => {
-    console.log(groupId, keyName, keyValue, apiKey);
     const getGroupVariableUrl = `https://gitlab.com/api/v4/groups/${groupId}/variables/${keyName}`;
 
     const createGroupVariableUrl = `https://gitlab.com/api/v4/groups/${groupId}/variables`;
@@ -83,10 +81,10 @@ const asyncSetNewGroupKey = (groupId, keyName, keyValue, apiKey) => {
     });
 };
 
-const asyncListAccessKeys = () => new Promise ((resolve, reject) => {
+const asyncListAccessKeys = (awsUser) => new Promise ((resolve, reject) => {
     const iam = new AWS.IAM({region: 'us-east-1'});
     const gitlabUserParams = {
-        UserName: 'GitLabServiceUser'
+        UserName: awsUser
     };
 
     iam.listAccessKeys(gitlabUserParams, (err, data) => {
@@ -98,14 +96,14 @@ const asyncListAccessKeys = () => new Promise ((resolve, reject) => {
     });
 });
 
-const asyncDeleteOldKeys = () => new Promise ((resolve, reject) => {
+const asyncDeleteOldKeys = (awsUser) => new Promise ((resolve, reject) => {
     const iam = new AWS.IAM({region: 'us-east-1'});
     var deletedKeys = [];
-    asyncListAccessKeys().then(accessKeys => {
+    asyncListAccessKeys(awsUser).then(accessKeys => {
         accessKeys.map(accessKey => {
             const deleteKeyParams = {
                 AccessKeyId: accessKey.AccessKeyId,
-                UserName: 'GitLabServiceUser'
+                UserName: awsUser
             };
             iam.deleteAccessKey(deleteKeyParams, (err, data) => {
                 if (err) {

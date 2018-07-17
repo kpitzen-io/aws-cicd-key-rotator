@@ -1,8 +1,8 @@
-variable "gitlab_group_id" {
-  default = "3240892"
-}
+variable "gitlab_group_id" {}
 
 variable "api_key" {}
+
+variable "aws_user" {}
 
 provider "aws" {
   region = "us-east-1"
@@ -48,6 +48,7 @@ resource "aws_lambda_function" "key_rotator_lambda" {
     variables = {
       API_KEY  = "${var.api_key}"
       GROUP_ID = "${var.gitlab_group_id}"
+      AWS_USER = "${var.aws_user}"
     }
   }
 }

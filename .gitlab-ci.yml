@@ -39,5 +39,5 @@ deploy:
     - "export AWS_DEFAULT_REGION=us-east-1"
     - "terraform init -reconfigure -input=false"
     - "terraform workspace select dev || terraform workspace new dev"
-    - "terraform validate -input=false -var gitlab_group_id=$GROUP_ID -var api_key=$API_KEY"
-    - "terraform apply -input=false -auto-approve -var gitlab_group_id=$GROUP_ID -var api_key=$API_KEY"
+    - "terraform validate -input=false -var gitlab_group_id=$GROUP_ID -var api_key=$API_KEY -var aws_user=$AWS_USER"
+    - "terraform apply -input=false -auto-approve -var gitlab_group_id=$GROUP_ID -var api_key=$API_KEY -var aws_user=$AWS_USER"
