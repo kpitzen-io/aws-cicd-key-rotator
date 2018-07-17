@@ -48,14 +48,16 @@ const asyncSetNewGroupKey = (groupId, keyName, keyValue, apiKey) => {
     const createGroupVariablePayload = {
         method: 'POST',
         value: keyValue,
-        protected: true
+        protected: false,
+        headers: { 'PRIVATE-TOKEN': apiKey }
     };
 
     const updateGroupVariableUrl = `https://gitlab.com/api/v4/groups/${groupId}/variables/${keyName}`;
     const updateGroupVariablePayload = {
         method: 'PUT',
         value: keyValue,
-        protected: true
+        protected: false,
+        headers: { 'PRIVATE-TOKEN': apiKey }
     };
 
     return new Promise((resolve, reject) => {
