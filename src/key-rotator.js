@@ -22,9 +22,9 @@ async function rotateKeys(groupId, apiKey, awsUser) {
     );
     return {
         'accessKey': accessKeyRotate,
-        'accessKeySet': accessKeyRotate === accessKey,
+        'accessKeySet': accessKeyRotate.value === accessKey,
         'secretKey': secretKeyRotate,
-        'secretKeySet': secretKeyRotate === secretKey
+        'secretKeySet': secretKeyRotate.value === secretKey
     };
 }
 
