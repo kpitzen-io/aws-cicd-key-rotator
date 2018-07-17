@@ -16,7 +16,8 @@ build:
   stage: test_build
   script:
     - "apk update"
-    - "apk add zip"
+    - "apk add yarn zip"
+    - "yarn"
     - "zip -r key_rotator.zip ./*"
   artifacts:
     paths:
