@@ -47,32 +47,34 @@ const asyncSetNewGroupKey = (groupId, keyName, keyValue, apiKey) => {
     const createGroupVariableUrl = `https://gitlab.com/api/v4/groups/${groupId}/variables`;
     const createGroupVariablePayload = {
         method: 'POST',
-        body: {
+        body: JSON.stringify({
             value: keyValue,
             protected: false,
-        },
+        }),
         headers: { 'PRIVATE-TOKEN': apiKey }
     };
 
     const updateGroupVariableUrl = `https://gitlab.com/api/v4/groups/${groupId}/variables/${keyName}`;
     const updateGroupVariablePayload = {
         method: 'PUT',
-        body: {
+        body: JSON.stringify({
             value: keyValue,
             protected: false,
-        },
+        }),
         headers: { 'PRIVATE-TOKEN': apiKey }
     };
 
     return new Promise((resolve, reject) => {
         fetch(getGroupVariableUrl).then(response => {
             fetch(updateGroupVariableUrl, updateGroupVariablePayload).then(response => {
+                console.log(response);
                 resolve(response);
             }).catch(error => {
                 reject(error);
             });
         }).catch(error => {
             fetch(createGroupVariableUrl, createGroupVariablePayload).then(response => {
+                console.log(response);
                 resolve(response);
             }).catch(error => {
                 reject(error);
