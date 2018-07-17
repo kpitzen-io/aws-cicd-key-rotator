@@ -16,8 +16,10 @@ terraform {
   }
 }
 
+data "aws_caller_identity" "current" {}
+
 resource "aws_iam_role" "role" {
-  name = "keyRotatorLambdaInvocation"
+  name = "keyRotatorLambdaRole"
 
   assume_role_policy = <<EOF
 {
@@ -54,7 +56,7 @@ resource "aws_lambda_function" "key_rotator_lambda" {
 }
 
 resource "aws_iam_role_policy" "policy" {
-  name = "keyRotatorPolicy"
+  name = "keyRotatorLambdaPolicy"
   role = "${aws_iam_role.role.id}"
 
   policy = <<POLICY
@@ -73,4 +75,58 @@ resource "aws_iam_role_policy" "policy" {
   ]
 }
 POLICY
+}
+
+resource "aws_iam_role" "cloudwatch_role" {
+  name = "keyRotatorCloudWatchRole"
+
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "cloudwatch.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "cloudwatch_policy" {
+  name = "keyRotatorCloudWatchPolicy"
+  role = "${aws_iam_role.cloudwatch_role.id}"
+
+  policy = <<POLICY
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "lambda:InvokeFunction"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
+}
+POLICY
+}
+
+resource "aws_cloudwatch_event_rule" "rule" {
+  name_prefix         = "key-rotate"
+  schedule_expression = "rate(1 hour)"
+
+  description = "Schedules a key rotation once per hour"
+
+  role_arn = "${aws_iam_role.cloudwatch_role.arn}"
+}
+
+resource "aws_cloudwatch_event_target" "lambda" {
+  rule = "${aws_cloudwatch_event_rule.rule.name}"
+  arn  = "arn:aws:lambda:us-east-1:${aws_caller_identity.current.account_id}:function:${aws_lambda_function.key_rotator_lambda.name}"
 }

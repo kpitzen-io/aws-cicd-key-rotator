@@ -1,4 +1,4 @@
-const keyRotator = require('src/key-rotator');
+const keyRotator = require('src/gitlab-aws-key-rotator');
 
 const apiKey = process.env['API_KEY'];
 const groupId = process.env['GROUP_ID'];
