@@ -35,6 +35,7 @@ const asyncGetNewKeys = () => new Promise((resolve, reject) => {
         if (error) {
             reject(error);
         }
+        console.log('newKeys', data);
         resolve(data);
     });
 });
