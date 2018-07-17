@@ -1,4 +1,5 @@
 const AWS = require('aws-sdk');
+const fetch = require('fetch');
 
 async function rotateKeys(groupId, apiKey) {
     const deleteAwsKeys = await asyncDeleteOldKeys();
