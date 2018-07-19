@@ -141,10 +141,10 @@ resource "aws_cloudwatch_event_target" "lambda" {
 
   input = <<JSON
 {
-  apiKey  = "${var.api_key}",
-  groupId = "${var.gitlab_group_id}",
-  awsUser = "${var.aws_user}",
-  cicdStack = "${var.cicd_stack}"
+  "apiKey": "${var.api_key}",
+  "groupId": "${var.gitlab_group_id}",
+  "awsUser": "${var.aws_user}",
+  "cicdStack": "${var.cicd_stack}"
 }
 JSON
 }
