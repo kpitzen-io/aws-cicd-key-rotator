@@ -1,6 +1,6 @@
 {
   "name": "aws-cicd-key-rotator",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Key rotation manager for AWS and your CICD tool of choice",
   "main": "index.js",
   "author": "Kyle Pitzen",
