@@ -1,5 +1,5 @@
 stages:
-  - test_build
+  - test build
   - validate
   - deploy
 
@@ -9,7 +9,7 @@ cache:
 
 test:
   image: alpine:latest
-  stage: test_build
+  stage: test build
   script:
     - "apk update"
     - "apk add yarn zip"
@@ -18,11 +18,12 @@ test:
 
 build:
   image: alpine:latest
-  stage: test_build
+  stage: test build
   script:
     - "apk update"
     - "apk add yarn zip"
-    - "yarn"
+    - "yarn --prod"
+    - "rm -rf node_modules"
     - "zip -r key_rotator.zip ./*"
   artifacts:
     paths:
