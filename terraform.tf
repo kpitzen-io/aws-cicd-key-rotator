@@ -57,10 +57,6 @@ resource "aws_lambda_function" "key_rotator_lambda" {
   handler          = "index.handler"
   source_code_hash = "${base64sha256(file("key_rotator.zip"))}"
   runtime          = "nodejs8.10"
-
-  environment {
-    variables = {}
-  }
 }
 
 resource "aws_iam_role_policy" "policy" {
