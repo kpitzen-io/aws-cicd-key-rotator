@@ -9,17 +9,17 @@ To start, you'll need to add a project level variable for this project named <co
 Following this, you'll need to add variables at the repo level where you're hosting this project:
 
 <code>
-variable "gitlab_group_id" {}
+    variable "gitlab_group_id" {}
 
-variable "api_key" {}
+    variable "api_key" {}
 
-variable "aws_user" {}
+    variable "aws_user" {}
 
-variable "cicd_stack" {
-  default = "GitLab"
+    variable "cicd_stack" {
+    default = "GitLab"
 
-  description = "The CICD Stack being used.  We currently support: GitLab"
-}
+    description = "The CICD Stack being used.  We currently support: GitLab"
+    }
 </code>
 
 You'll also need to change the backend from <code>kpitzen-ci</code> to whichever s3 bucket you're using as a backend for terraform.
