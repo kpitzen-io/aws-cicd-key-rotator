@@ -23,7 +23,6 @@ build:
     - "apk update"
     - "apk add yarn zip"
     - "yarn --prod"
-    - "rm -rf node_modules"
     - "zip -r key_rotator.zip ./*"
   artifacts:
     paths:
