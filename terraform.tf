@@ -4,6 +4,18 @@ variable "api_key" {}
 
 variable "aws_user" {}
 
+variable "cicd_stack" {
+  default = "GitLab"
+
+  description = "The CICD Stack being used.  We currently support: GitLab"
+}
+
+variable "rotation_rate" {
+  default = "6 hours"
+
+  description = "How often you'd like the key to be rotated"
+}
+
 provider "aws" {
   region = "us-east-1"
 }
@@ -47,11 +59,7 @@ resource "aws_lambda_function" "key_rotator_lambda" {
   runtime          = "nodejs8.10"
 
   environment {
-    variables = {
-      API_KEY  = "${var.api_key}"
-      GROUP_ID = "${var.gitlab_group_id}"
-      AWS_USER = "${var.aws_user}"
-    }
+    variables = {}
   }
 }
 
@@ -67,7 +75,8 @@ resource "aws_iam_role_policy" "policy" {
       "Action": [
         "iam:CreateAccessKey",
         "iam:DeleteAccessKey",
-        "iam:ListAccessKeys"
+        "iam:ListAccessKeys",
+        "logs:*"
       ],
       "Effect": "Allow",
       "Resource": "*"
@@ -119,9 +128,9 @@ POLICY
 
 resource "aws_cloudwatch_event_rule" "rule" {
   name_prefix         = "key-rotate"
-  schedule_expression = "rate(1 hour)"
+  schedule_expression = "rate(${var.rotation_rate})"
 
-  description = "Schedules a key rotation once per hour"
+  description = "Schedules a key rotation once every six hours"
 
   role_arn = "${aws_iam_role.cloudwatch_role.arn}"
 }
@@ -129,4 +138,13 @@ resource "aws_cloudwatch_event_rule" "rule" {
 resource "aws_cloudwatch_event_target" "lambda" {
   rule = "${aws_cloudwatch_event_rule.rule.name}"
   arn  = "${aws_lambda_function.key_rotator_lambda.arn}"
+
+  input = <<JSON
+{
+  apiKey  = "${var.api_key}",
+  groupId = "${var.gitlab_group_id}",
+  awsUser = "${var.aws_user}",
+  cicdStack = "${var.cicd_stack}"
+}
+JSON
 }
