@@ -1,5 +1,6 @@
 stages:
-  - test build validate
+  - test build
+  - validate
   - deploy
 
 cache:
@@ -8,7 +9,7 @@ cache:
 
 test:
   image: alpine:latest
-  stage: test build validate
+  stage: test build
   script:
     - "apk update"
     - "apk add yarn zip"
@@ -17,7 +18,7 @@ test:
 
 build:
   image: alpine:latest
-  stage: test build validate
+  stage: test build
   script:
     - "apk update"
     - "apk add yarn zip"
@@ -34,7 +35,7 @@ validate:
     entrypoint:
       - '/usr/bin/env'
       - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
-  stage: test build validate
+  stage: validate
   script:
     - "export AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID"
     - "export AWS_SECRET_ACCESS_KEY=$AWS_SECRET_KEY"
